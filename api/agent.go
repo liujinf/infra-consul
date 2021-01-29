@@ -506,7 +506,14 @@ func (a *Agent) Checks() (map[string]*AgentCheck, error) {
 // ChecksWithFilter returns a subset of the locally registered checks that match
 // the given filter expression
 func (a *Agent) ChecksWithFilter(filter string) (map[string]*AgentCheck, error) {
+	return a.ChecksWithFilterOpts(filter, nil)
+}
+
+// ChecksWithFilterOpts returns a subset of the locally registered checks that match
+// the given filter expression
+func (a *Agent) ChecksWithFilterOpts(filter string, q *QueryOptions) (map[string]*AgentCheck, error) {
 	r := a.c.newRequest("GET", "/v1/agent/checks")
+	r.setQueryOptions(q)
 	r.filterQuery(filter)
 	_, resp, err := requireOK(a.c.doRequest(r))
 	if err != nil {
@@ -529,7 +536,14 @@ func (a *Agent) Services() (map[string]*AgentService, error) {
 // ServicesWithFilter returns a subset of the locally registered services that match
 // the given filter expression
 func (a *Agent) ServicesWithFilter(filter string) (map[string]*AgentService, error) {
+	return a.ServicesWithFilterOpts(filter, nil)
+}
+
+// ServicesWithFilterOpts returns a subset of the locally registered services that match
+// the given filter expression
+func (a *Agent) ServicesWithFilterOpts(filter string, q *QueryOptions) (map[string]*AgentService, error) {
 	r := a.c.newRequest("GET", "/v1/agent/services")
+	r.setQueryOptions(q)
 	r.filterQuery(filter)
 	_, resp, err := requireOK(a.c.doRequest(r))
 	if err != nil {
@@ -716,6 +730,19 @@ func (a *Agent) serviceRegister(service *AgentServiceRegistration, opts ServiceR
 // the local agent
 func (a *Agent) ServiceDeregister(serviceID string) error {
 	r := a.c.newRequest("PUT", "/v1/agent/service/deregister/"+serviceID)
+	_, resp, err := requireOK(a.c.doRequest(r))
+	if err != nil {
+		return err
+	}
+	resp.Body.Close()
+	return nil
+}
+
+// ServiceDeregisterOpts is used to deregister a service with
+// the local agent with query options.
+func (a *Agent) ServiceDeregisterOpts(serviceID string, q *QueryOptions) error {
+	r := a.c.newRequest("PUT", "/v1/agent/service/deregister/"+serviceID)
+	r.setQueryOptions(q)
 	_, resp, err := requireOK(a.c.doRequest(r))
 	if err != nil {
 		return err
