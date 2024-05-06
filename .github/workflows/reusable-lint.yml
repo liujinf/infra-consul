@@ -54,7 +54,7 @@ jobs:
       - name: Set golangci-lint version
         run: echo "GOLANGCI_LINT_VERSION=$(make --no-print-directory print-GOLANGCI_LINT_VERSION)" >> $GITHUB_ENV
       - name: lint-${{ matrix.directory }}
-        uses: golangci/golangci-lint-action@639cd343e1d3b897ff35927a75193d57cfcba299 # v3.6.0
+        uses: golangci/golangci-lint-action@38e1018663fa5173f3968ea0777460d3de38f256 # v5.3.0
         with:
           working-directory: ${{ matrix.directory }}
           version: ${{ env.GOLANGCI_LINT_VERSION }}
